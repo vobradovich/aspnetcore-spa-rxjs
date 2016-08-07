@@ -4,21 +4,21 @@ import * as Rx from 'rxjs';
 // STATE - This defines the type of data maintained in the Redux store.
 
 
-export interface WeatherForecastsState {
+export interface IWeatherForecastsState {
     isLoading: boolean;
     startDateIndex: number;
-    forecasts: WeatherForecast[];
-    params: RouteParams;
+    forecasts: IWeatherForecast[];
+    params: IRouteParams;
 }
 
-export interface WeatherForecast {
+export interface IWeatherForecast {
     dateFormatted: string;
     temperatureC: number;
     temperatureF: number;
     summary: string;
 }
 
-interface RouteParams {
+interface IRouteParams {
     startDateIndex: string;
 }
 
@@ -39,10 +39,10 @@ export const WeatherForecastActions = {
 //     })
 // );
 
-export const CounterReducer = Rx.Observable.merge(
+export const WeatherForecastsReducer = Rx.Observable.merge(
     WeatherForecastActions.request
         .do(WeatherForecastActions.receive)
-        .map((startDateIndex) => (state: WeatherForecastsState): WeatherForecastsState => (Object.assign({}, state, { startDateIndex: startDateIndex, isLoading: true }))),
+        .map((startDateIndex) => (state: IWeatherForecastsState): IWeatherForecastsState => (Object.assign({}, state, { startDateIndex: startDateIndex, isLoading: true }))),
 
     WeatherForecastActions.receive
         .switchMap((startDateIndex) => {
@@ -52,5 +52,14 @@ export const CounterReducer = Rx.Observable.merge(
         })
         //.map((response: Rx.AjaxResponse) => response.response)
         .switchMap((response: Response) => Rx.Observable.fromPromise(response.json()))
-        .map((data) => (state: WeatherForecastsState): WeatherForecastsState => (Object.assign({}, state, { forecasts: data, isLoading: false })))
+        .map((data) => (state: IWeatherForecastsState): IWeatherForecastsState => (Object.assign({}, state, { forecasts: data, isLoading: false })))
 );
+
+// STORE
+const initialState: IWeatherForecastsState = { isLoading: false, startDateIndex: 0, forecasts: [], params: { startDateIndex: "0" } };
+export const WeatherForecastsStore = new Rx.BehaviorSubject<IWeatherForecastsState>(initialState);
+
+WeatherForecastsReducer.scan((state: IWeatherForecastsState, r) => r(state), WeatherForecastsStore.getValue()).subscribe(WeatherForecastsStore);
+
+// DEBUG
+WeatherForecastsStore.subscribe(console.log);

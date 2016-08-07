@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Link } from 'react-router';
-import { Store } from '../store/Store';
 import connect from './connect';
-import { WeatherForecast, WeatherForecastsState, WeatherForecastActions } from '../store/WeatherForecasts';
+import { IWeatherForecast, IWeatherForecastsState, WeatherForecastActions, WeatherForecastsStore } from '../store/WeatherForecasts';
 
-class FetchData extends React.Component<WeatherForecastsState, void> {
+class FetchData extends React.Component<IWeatherForecastsState, void> {
     public render() {
         return <div>
             <h1>Weather forecast</h1>
@@ -49,7 +48,7 @@ class FetchData extends React.Component<WeatherForecastsState, void> {
     }
 }
 
-export default connect(Store.map(s => s.weatherForecasts))(FetchData, (props) => {
+export default connect(WeatherForecastsStore)(FetchData, (props) => {
     let startDateIndex = parseInt(props.params.startDateIndex) || 0;
     if (startDateIndex !== props.startDateIndex) {
         WeatherForecastActions.request.next(startDateIndex);

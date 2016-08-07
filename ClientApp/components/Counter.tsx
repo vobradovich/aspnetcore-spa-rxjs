@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ICounterState, CounterActions } from '../store/Counter';
-import { Store } from '../store/Store';
+import { ICounterState, CounterActions, CounterStore } from '../store/Counter';
 import connect from './connect';
 
 class Counter extends React.Component<ICounterState, any> {
@@ -19,4 +18,4 @@ class Counter extends React.Component<ICounterState, any> {
     }
 }
 
-export default connect(Store.map(s => s.counter))(Counter);
+export default connect(CounterStore)(Counter);

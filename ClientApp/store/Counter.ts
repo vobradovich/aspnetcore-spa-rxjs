@@ -20,6 +20,15 @@ export const CounterActions = {
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
 export const CounterReducer = Rx.Observable.merge(
-    CounterActions.increment.map((n = 1) => (state: ICounterState) => Object.assign({}, state, { count: state.count + n })),
-    CounterActions.reset.map(() => (state: ICounterState) => Object.assign({}, state, { count: 0 }))
+    CounterActions.increment.map((n = 1) => (state: ICounterState): ICounterState => Object.assign({}, state, { count: state.count + n })),
+    CounterActions.reset.map(() => (state: ICounterState): ICounterState => Object.assign({}, state, { count: 0 }))
 );
+
+// STORE
+const initialState: ICounterState = { count: 0 };
+export const CounterStore = new Rx.BehaviorSubject<ICounterState>(initialState);
+
+CounterReducer.scan((state: ICounterState, r) => r(state), CounterStore.getValue()).subscribe(CounterStore);
+
+// DEBUG
+CounterStore.subscribe(console.log);
