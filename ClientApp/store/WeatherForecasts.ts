@@ -46,9 +46,11 @@ export const CounterReducer = Rx.Observable.merge(
 
     WeatherForecastActions.receive
         .switchMap((startDateIndex) => {
+            //return Rx.Observable.ajax(`/api/SampleData/WeatherForecasts?startDateIndex=${startDateIndex}`);
             let fetchTask = fetch(`/api/SampleData/WeatherForecasts?startDateIndex=${startDateIndex}`)
             return Rx.Observable.fromPromise<Response>(fetchTask).catch(e => Rx.Observable.empty());
         })
+        //.map((response: Rx.AjaxResponse) => response.response)
         .switchMap((response: Response) => Rx.Observable.fromPromise(response.json()))
         .map((data) => (state: WeatherForecastsState): WeatherForecastsState => (Object.assign({}, state, { forecasts: data, isLoading: false })))
 );

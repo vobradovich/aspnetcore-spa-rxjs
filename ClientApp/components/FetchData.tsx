@@ -5,22 +5,6 @@ import connect from './connect';
 import { WeatherForecast, WeatherForecastsState, WeatherForecastActions } from '../store/WeatherForecasts';
 
 class FetchData extends React.Component<WeatherForecastsState, void> {
-    componentWillMount() {
-        // This method runs when the component is first added to the page 
-        let startDateIndex = parseInt(this.props.params.startDateIndex) || 0;
-        if (startDateIndex !== this.props.startDateIndex) {
-            WeatherForecastActions.request.next(startDateIndex);
-        }
-    }
-
-    componentWillReceiveProps(nextProps: WeatherForecastsState) {
-        // This method runs when incoming props (e.g., route params) change
-        let startDateIndex = parseInt(nextProps.params.startDateIndex) || 0;
-        if (startDateIndex !== nextProps.startDateIndex) {
-            WeatherForecastActions.request.next(startDateIndex);
-        }
-    }
-
     public render() {
         return <div>
             <h1>Weather forecast</h1>
@@ -65,5 +49,10 @@ class FetchData extends React.Component<WeatherForecastsState, void> {
     }
 }
 
-export default connect(Store.map(s => s.weatherForecasts))(FetchData);
+export default connect(Store.map(s => s.weatherForecasts))(FetchData, (props) => {
+    let startDateIndex = parseInt(props.params.startDateIndex) || 0;
+    if (startDateIndex !== props.startDateIndex) {
+        WeatherForecastActions.request.next(startDateIndex);
+    }
+});
 

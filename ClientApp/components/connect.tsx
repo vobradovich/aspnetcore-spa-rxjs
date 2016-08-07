@@ -3,12 +3,17 @@ import * as ReactDOM from "react-dom";
 import * as Rx from 'rxjs';
 
 function connect(observable: Rx.Observable<Object>) {
-    return function wrap(WrappedComponent: any) {
+    return function wrap(WrappedComponent: any, receiveProps: Function = null) {
         return class Connect extends React.Component<any, Object> {
             private subscription;
 
             componentWillMount() {
                 this.subscription = observable.subscribe(this.setState.bind(this));
+                receiveProps ? receiveProps(this.props) : null;
+            }
+
+            componentWillReceiveProps(nextProps) {
+                receiveProps ? receiveProps(nextProps) : null;
             }
 
             componentWillUnmount() {
