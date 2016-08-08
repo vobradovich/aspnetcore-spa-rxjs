@@ -7,8 +7,7 @@ import * as Rx from 'rxjs';
 export interface IWeatherForecastsState {
     isLoading: boolean;
     startDateIndex: number;
-    forecasts: IWeatherForecast[];
-    params: IRouteParams;
+    forecasts: IWeatherForecast[];    
 }
 
 export interface IWeatherForecast {
@@ -16,10 +15,6 @@ export interface IWeatherForecast {
     temperatureC: number;
     temperatureF: number;
     summary: string;
-}
-
-interface IRouteParams {
-    startDateIndex: string;
 }
 
 export const WeatherForecastActions = {
@@ -56,7 +51,7 @@ export const WeatherForecastsReducer = Rx.Observable.merge(
 );
 
 // STORE
-const initialState: IWeatherForecastsState = { isLoading: false, startDateIndex: 0, forecasts: [], params: { startDateIndex: "0" } };
+const initialState: IWeatherForecastsState = { isLoading: false, startDateIndex: 0, forecasts: [] };
 export const WeatherForecastsStore = new Rx.BehaviorSubject<IWeatherForecastsState>(initialState);
 
 WeatherForecastsReducer.scan((state: IWeatherForecastsState, r) => r(state), WeatherForecastsStore.getValue()).subscribe(WeatherForecastsStore);

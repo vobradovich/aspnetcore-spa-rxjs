@@ -3,7 +3,15 @@ import { Link } from 'react-router';
 import connect from './connect';
 import { IWeatherForecast, IWeatherForecastsState, WeatherForecastActions, WeatherForecastsStore } from '../store/WeatherForecasts';
 
-class FetchData extends React.Component<IWeatherForecastsState, void> {
+interface IWeatherForecastsProps extends IWeatherForecastsState {
+    params: IRouteParams;
+}
+
+interface IRouteParams {
+    startDateIndex?: string;
+}
+
+class FetchData extends React.Component<IWeatherForecastsProps, void> {
     public render() {
         return <div>
             <h1>Weather forecast</h1>
@@ -48,10 +56,10 @@ class FetchData extends React.Component<IWeatherForecastsState, void> {
     }
 }
 
-export default connect(WeatherForecastsStore)(FetchData, (props) => {
+export default connect(WeatherForecastsStore, null, (props: IWeatherForecastsProps) => {
     let startDateIndex = parseInt(props.params.startDateIndex) || 0;
     if (startDateIndex !== props.startDateIndex) {
         WeatherForecastActions.request.next(startDateIndex);
     }
-});
+})(FetchData);
 
