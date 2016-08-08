@@ -8,7 +8,6 @@ export interface WeatherForecastsState {
     isLoading: boolean;
     startDateIndex: number;
     forecasts: WeatherForecast[];
-    params: RouteParams;
 }
 
 export interface WeatherForecast {
@@ -16,10 +15,6 @@ export interface WeatherForecast {
     temperatureC: number;
     temperatureF: number;
     summary: string;
-}
-
-interface RouteParams {
-    startDateIndex: string;
 }
 
 export const WeatherForecastActions = {

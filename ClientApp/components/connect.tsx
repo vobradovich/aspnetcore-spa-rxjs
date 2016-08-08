@@ -2,8 +2,23 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import * as Rx from 'rxjs';
 
-function connect(observable: Rx.Observable<Object>) {
-    return function wrap(WrappedComponent: any, receiveProps: Function = null) {
+function bindActions(actions: Object) {
+    var keys = Object.keys(actions);
+    return Object.keys(actions).reduce((boundActions, key) => {
+        const member = actions[key];
+        if (member instanceof Rx.Subject) {
+            boundActions[key] = member.next.bind(member);
+        }
+        if (typeof member === 'function') {
+            boundActions[key] = member.bind(actions);
+        }
+        return boundActions;
+    }, {});
+}
+
+function connect(observable: Rx.Observable<Object>, actions: Object = null, receiveProps: Function = null) {
+    const actionsProps = actions ? bindActions(actions) : null;
+    return function wrap(WrappedComponent: any) {
         return class Connect extends React.Component<any, Object> {
             private subscription;
 
@@ -21,9 +36,7 @@ function connect(observable: Rx.Observable<Object>) {
             }
 
             render() {
-                return (
-                    <WrappedComponent {...this.state} {...this.props} />
-                );
+                return React.createElement(WrappedComponent, Object.assign({}, actionsProps, this.state, this.props));
             }
         };
     }

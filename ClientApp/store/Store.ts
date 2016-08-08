@@ -8,7 +8,7 @@ export interface IApplicationState {
     weatherForecasts: WeatherForecasts.WeatherForecastsState
 }
 
-const initialState: IApplicationState = { counter: { count: 0 }, weatherForecasts: { isLoading: false, startDateIndex: 0, forecasts: [], params: { startDateIndex: "0" } } }
+const initialState: IApplicationState = { counter: { count: 0 }, weatherForecasts: { isLoading: false, startDateIndex: 0, forecasts: [] } }
 export const Store = new Rx.BehaviorSubject<IApplicationState>(initialState);
 
 const reducers = Rx.Observable.merge(

@@ -4,6 +4,14 @@ import { Store } from '../store/Store';
 import connect from './connect';
 import { WeatherForecast, WeatherForecastsState, WeatherForecastActions } from '../store/WeatherForecasts';
 
+interface IWeatherForecastsProps extends WeatherForecastsState {
+    params: IRouteParams;
+}
+
+interface IRouteParams {
+    startDateIndex?: string;
+}
+
 class FetchData extends React.Component<WeatherForecastsState, void> {
     public render() {
         return <div>
@@ -49,10 +57,9 @@ class FetchData extends React.Component<WeatherForecastsState, void> {
     }
 }
 
-export default connect(Store.map(s => s.weatherForecasts))(FetchData, (props) => {
+export default connect(Store.map(s => s.weatherForecasts), null, (props: IWeatherForecastsProps) => {
     let startDateIndex = parseInt(props.params.startDateIndex) || 0;
     if (startDateIndex !== props.startDateIndex) {
         WeatherForecastActions.request.next(startDateIndex);
     }
-});
-
+})(FetchData);
