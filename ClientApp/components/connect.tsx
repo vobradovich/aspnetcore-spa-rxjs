@@ -3,7 +3,6 @@ import * as ReactDOM from "react-dom";
 import * as Rx from 'rxjs';
 
 function bindActions(actions: Object) {
-    var keys = Object.keys(actions);
     return Object.keys(actions).reduce((boundActions, key) => {
         const member = actions[key];
         if (member instanceof Rx.Subject) {
