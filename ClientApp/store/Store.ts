@@ -2,22 +2,30 @@ import * as Rx from 'rxjs';
 import * as WeatherForecasts from './WeatherForecasts';
 import * as Counter from './Counter';
 
-// The top-level state object
+
+// The top-level state object interface
 export interface IApplicationState {
     counter: Counter.ICounterState,
     weatherForecasts: WeatherForecasts.WeatherForecastsState
 }
 
 const initialState: IApplicationState = { counter: { count: 0 }, weatherForecasts: { isLoading: false, startDateIndex: 0, forecasts: [] } }
+
+// STORE The top-level state object 
 export const Store = new Rx.BehaviorSubject<IApplicationState>(initialState);
 
-const reducers = Rx.Observable.merge(
-    Counter.CounterReducer.map(reducer => (state: IApplicationState): IApplicationState => (Object.assign({}, state, { counter: reducer(state.counter) }))),
-    WeatherForecasts.CounterReducer.map(reducer => (state: IApplicationState): IApplicationState => (Object.assign({}, state, { weatherForecasts: reducer(state.weatherForecasts) })))
-);
+const scopedReducers = {
+    counter: Counter.CounterReducer,
+    weatherForecasts: WeatherForecasts.CounterReducer
+}
 
-reducers
-    .scan((state: IApplicationState, r) => r(state), Store.getValue())
+const reducers = Object.keys(scopedReducers)
+    .filter(key => scopedReducers[key] instanceof Rx.Observable && typeof Store.getValue()[key] !== "undefined")
+    .map(key => scopedReducers[key].map(reducer => (state: IApplicationState): IApplicationState => (Object.assign({}, state, { [key]: reducer(state[key]) } ))));
+
+Rx.Observable.merge(...reducers)
+    .scan((state: IApplicationState, reducer) => reducer(state), Store.getValue())
     .subscribe(Store);
 
+// DEBUG
 Store.subscribe(console.log);
